@@ -1,0 +1,11 @@
+image: mcr.microsoft.com/azure-functions/node:4-node18
+
+build:
+  stage: build
+  script:
+    - mpm install
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Hi Brendan"
