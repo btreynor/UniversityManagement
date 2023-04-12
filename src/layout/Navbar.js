@@ -20,8 +20,10 @@ export default function Navbar() {
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
-
-                    <Link className="btn btn-outline-light" to="/addUniversity">Add University</Link>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <Link className="btn btn-outline-light btn-lg mr-5" to="/addUniversity">Add University</Link>
+                    <Link className="btn btn-outline-light btn-lg mx-2" to="/login">Login</Link>
+                    </div>
                 </div>
             </nav>
 

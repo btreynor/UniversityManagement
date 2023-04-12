@@ -1,6 +1,11 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
+import AuthContext from '../context/AuthProvider';
+
+import axios from 'axios';
+const LOGIN_URL = '/auth';
 
 const Login = () => {
+    const { setAuth } = useContext(AuthContext);
     const userRef = useRef();
     const errRef = useRef();
 
@@ -19,10 +24,33 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(user, pwd);
+        
+        try {
+            const response = await axios.post(LOGIN_URL, JSON.stringify({ user, pwd }),
+            {
+                headers: { 'Content-Type': 'application/json' },
+                withCredentials: true
+            }
+        );
+        console.log(JSON.stringify(response?.data));
+        const accessToken = response?.data?.accessToken;
+        const roles = response?.data?.roles;
+        setAuth({ user, pwd, roles, accessToken });
         setUser('');
         setPwd('');
         setSuccess(true);
+        } catch (err) {
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 400) {
+                setErrMsg('Missing Username or Password');
+            } else if (err.response?.status === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg('Login Failed');
+            }
+            errRef.current.focus();
+        }
     }
 
   return (
@@ -37,7 +65,7 @@ const Login = () => {
         </section>
     ) : (
     <section>
-        <p ref={errRef} classname={errMsg? "errmsg" :
+        <p ref={errRef} className={errMsg? "errmsg" :
         "offscreen"} aria-live="assertive">{errMsg}</p>
         <h1>Sign In</h1>
         <form onSubmit={handleSubmit}>
@@ -52,7 +80,7 @@ const Login = () => {
                 required
             />
 
-            <label htmlFor="password">Username:</label>
+            <label htmlFor="password">Password:</label>
             <input 
                 type="password"
                 id="password"
@@ -64,9 +92,9 @@ const Login = () => {
         </form>
         <p>
             Need an Account?<br />
-            <span classname="line">
+            <span className="line">
                 {/*router link here */}
-                <a href="/">Sign Up</a>
+                <a href="/register">Sign Up</a>
             </span>
         </p>
     </section>

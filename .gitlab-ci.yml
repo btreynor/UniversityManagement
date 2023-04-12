@@ -4,8 +4,17 @@ build:
   stage: build
   script:
     - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - build/
 
 deploy:
   stage: deploy
+  image: mcr.microsoft.com/azure-cli
   script:
-    - echo "Hi Brendan"
+    - cd build
+    - az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET --tenant $CLIENT_TENANT
+    - az webapp deployment source config-zip --resource-group $RESOURCE_GROUP --name $APP_NAME --src bundle.zip
+    - az logout
+
