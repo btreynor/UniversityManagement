@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false && react-scripts buid && cd build && bestzip bundle.zip ./*",
+    "build": "CI=false && react-scripts build && cd build && bestzip bundle.zip ./*",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
