@@ -13,12 +13,12 @@ export default function Home() {
     },[]);
 
     const loadUniversities = async() => {
-        const result = await axios.get("http://localhost:8080/universities")
+        const result = await axios.get(`https://sp-backend-university.azurewebsites.net/universities`)
         setUniversity(result.data);
     };
 
     const deleteUniversity = async (id) => {
-        await axios.delete(`http://localhost:8080/university/${id}`)
+        await axios.delete(`https://sp-backend-university.azurewebsites.net/university/${id}`)
         loadUniversities();
     }
 

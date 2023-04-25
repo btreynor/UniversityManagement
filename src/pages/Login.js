@@ -1,106 +1,79 @@
-import { useRef, useState, useEffect, useContext } from 'react';
-import AuthContext from '../context/AuthProvider';
+import React, { Component } from 'react'
+import { login } from './UserFunctions'
 
-import axios from 'axios';
-const LOGIN_URL = '/auth';
 
-const Login = () => {
-    const { setAuth } = useContext(AuthContext);
-    const userRef = useRef();
-    const errRef = useRef();
-
-    const [user, setUser] = useState('');
-    const [pwd, setPwd] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false);
-
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd])
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        try {
-            const response = await axios.post(LOGIN_URL, JSON.stringify({ user, pwd }),
-            {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true
-            }
-        );
-        console.log(JSON.stringify(response?.data));
-        const accessToken = response?.data?.accessToken;
-        const roles = response?.data?.roles;
-        setAuth({ user, pwd, roles, accessToken });
-        setUser('');
-        setPwd('');
-        setSuccess(true);
-        } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
-            } else {
-                setErrMsg('Login Failed');
-            }
-            errRef.current.focus();
-        }
+class Login extends Component {
+  constructor() {
+    super()
+    this.state = {
+      username: '',
+      password: '',
+      errors: {}
     }
 
-  return (
-    <>
-    {success ? (
-        <section>
-            <h1>You are logged in!</h1>
-            <br />
-            <p>
-                <a href="/home">Go to Home</a>
-            </p>
-        </section>
-    ) : (
-    <section>
-        <p ref={errRef} className={errMsg? "errmsg" :
-        "offscreen"} aria-live="assertive">{errMsg}</p>
-        <h1>Sign In</h1>
-        <form onSubmit={handleSubmit}>
-            <label htmlFor="username">Username:</label>
-            <input 
-                type="text"
-                id="username"
-                ref={userRef}
-                autoComplete="off"
-                onChange={(e) => setUser(e.target.value)}
-                value={user}
-                required
-            />
+    this.onChange = this.onChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+  }
 
-            <label htmlFor="password">Password:</label>
-            <input 
-                type="password"
-                id="password"
-                onChange={(e) => setPwd(e.target.value)}
-                value={pwd}
-                required
-            />
-            <button>Sign In</button>
-        </form>
-        <p>
-            Need an Account?<br />
-            <span className="line">
-                {/*router link here */}
-                <a href="/register">Sign Up</a>
-            </span>
-        </p>
-    </section>
-    )}
-    </>
-  )
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value })
+  }
+  onSubmit(e) {
+    e.preventDefault()
+
+    const user = {
+      username: this.state.username,
+      password: this.state.password
+    }
+
+    login(user).then(res => {
+      if (res) {
+        this.props.history.push(`https://sp-backend-university.azurewebsites.net/`)
+      }
+    })
+  }
+
+  render() {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6 mt-5 mx-auto">
+            <form noValidate onSubmit={this.onSubmit}>
+              <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
+              <div className="form-group">
+                <label htmlFor="email">Username</label>
+                <input
+                  type="username"
+                  className="form-control"
+                  name="username"
+                  placeholder="Enter Username"
+                  value={this.state.username}
+                  onChange={this.onChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  placeholder="Password"
+                  value={this.state.password}
+                  onChange={this.onChange}
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn btn-lg btn-primary btn-block"
+              >
+                Sign in
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default Login

@@ -28,12 +28,12 @@ export default function EditUniversity() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        await axios.put(`http://localhost:8080/university/${id}`, university);
+        await axios.put(`https://sp-backend-university.azurewebsites.net/university/${id}`, university);
         navigate("/");
     };
 
     const loadUniversity = async () => {
-        const result = await axios.get(`http://localhost:8080/university/${id}`);
+        const result = await axios.get(`https://sp-backend-university.azurewebsites.net/university/${id}`);
         setUniversity(result.data);
     };
     

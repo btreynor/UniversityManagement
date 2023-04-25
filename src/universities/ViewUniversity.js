@@ -18,7 +18,7 @@ export default function ViewUniversity() {
       }, []);
 
       const loadUniversity = async () => {
-        const result = await axios.get(`http://localhost:8080/university/${id}`);
+        const result = await axios.get(`https://sp-backend-university.azurewebsites.net/university/${id}`);
         setUniversity(result.data);
       };
 

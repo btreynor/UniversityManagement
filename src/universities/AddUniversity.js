@@ -22,7 +22,7 @@ export default function AddUniversity() {
 
     const onSubmit = async (e)=>{
         e.preventDefault();
-        await axios.post("http://localhost:8080/university", university)
+        await axios.post(`https://sp-backend-university.azurewebsites.net/university`, university)
         navigate("/");
     }
     
